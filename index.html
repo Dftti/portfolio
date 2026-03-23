@@ -1,0 +1,900 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Diego F. — Ecommerce Automation Portfolio</title>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+  :root {
+    --bg: #0a0a0a;
+    --surface: #141414;
+    --surface-2: #1c1c1c;
+    --border: #262626;
+    --text: #fafafa;
+    --text-muted: #a3a3a3;
+    --accent: #22c55e;
+    --accent-dim: #15803d;
+    --accent-glow: rgba(34, 197, 94, 0.15);
+    --blue: #3b82f6;
+    --purple: #a855f7;
+    --orange: #f97316;
+    --pink: #ec4899;
+    --cyan: #06b6d4;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Hero */
+  .hero {
+    min-height: 80vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 4rem 2rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle at 50% 50%, var(--accent-glow) 0%, transparent 50%);
+    animation: pulse 8s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 0.3; transform: scale(1); }
+    50% { opacity: 0.6; transform: scale(1.1); }
+  }
+
+  .hero-content { position: relative; z-index: 1; max-width: 800px; }
+
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.4rem 1rem;
+    background: var(--accent-glow);
+    border: 1px solid var(--accent-dim);
+    border-radius: 100px;
+    font-size: 0.85rem;
+    color: var(--accent);
+    font-weight: 500;
+    margin-bottom: 2rem;
+  }
+
+  .hero-badge::before { content: ''; width: 8px; height: 8px; background: var(--accent); border-radius: 50%; }
+
+  .hero h1 {
+    font-size: clamp(2.5rem, 6vw, 4.5rem);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    line-height: 1.1;
+    margin-bottom: 1.5rem;
+  }
+
+  .hero h1 .gradient {
+    background: linear-gradient(135deg, var(--accent) 0%, var(--cyan) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .hero p {
+    font-size: 1.25rem;
+    color: var(--text-muted);
+    max-width: 600px;
+    margin: 0 auto 2.5rem;
+  }
+
+  .hero-stats {
+    display: flex;
+    gap: 3rem;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .hero-stat { text-align: center; }
+  .hero-stat .number { font-size: 2.5rem; font-weight: 800; color: var(--accent); }
+  .hero-stat .label { font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; }
+
+  /* Section */
+  .section {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 5rem 2rem;
+  }
+
+  .section-header {
+    text-align: center;
+    margin-bottom: 4rem;
+  }
+
+  .section-header h2 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin-bottom: 1rem;
+  }
+
+  .section-header p {
+    color: var(--text-muted);
+    font-size: 1.1rem;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  /* Project Sections */
+  .project {
+    margin-bottom: 3rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    overflow: hidden;
+    transition: border-color 0.3s;
+  }
+
+  .project:hover { border-color: var(--accent-dim); }
+
+  .project-top {
+    height: 4px;
+  }
+
+  .project:nth-child(1) .project-top { background: linear-gradient(90deg, var(--accent), var(--cyan)); }
+  .project:nth-child(2) .project-top { background: linear-gradient(90deg, var(--blue), var(--purple)); }
+  .project:nth-child(3) .project-top { background: linear-gradient(90deg, var(--orange), var(--pink)); }
+  .project:nth-child(4) .project-top { background: linear-gradient(90deg, var(--cyan), var(--blue)); }
+  .project:nth-child(5) .project-top { background: linear-gradient(90deg, var(--purple), var(--accent)); }
+  .project:nth-child(6) .project-top { background: linear-gradient(90deg, var(--pink), var(--orange)); }
+
+  .project-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+  }
+
+  .project-info {
+    padding: 2.5rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .project-diagram {
+    padding: 2rem;
+    background: var(--surface-2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-left: 1px solid var(--border);
+    min-height: 280px;
+  }
+
+  .project-diagram .mermaid {
+    width: 100%;
+  }
+
+  .project-number {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--accent);
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+  }
+
+  .project h3 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+    letter-spacing: -0.01em;
+  }
+
+  .project .description {
+    color: var(--text-muted);
+    font-size: 0.95rem;
+    margin-bottom: 1.25rem;
+    line-height: 1.7;
+  }
+
+  .project-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .tag {
+    padding: 0.25rem 0.75rem;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+  }
+
+  .project-result {
+    padding: 1rem;
+    background: var(--accent-glow);
+    border: 1px solid var(--accent-dim);
+    border-radius: 10px;
+    font-size: 0.9rem;
+  }
+
+  .project-result .result-label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--accent);
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+  }
+
+  .project-result .result-text { color: var(--text); font-weight: 500; }
+
+  /* Architecture */
+  .architecture {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 3rem;
+    margin-top: 2rem;
+  }
+
+  .architecture h3 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 2rem;
+    text-align: center;
+  }
+
+  .arch-flow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-bottom: 2rem;
+  }
+
+  .arch-node {
+    padding: 1rem 1.5rem;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    text-align: center;
+    min-width: 140px;
+  }
+
+  .arch-node .node-icon { font-size: 1.5rem; margin-bottom: 0.5rem; }
+  .arch-node .node-label { font-size: 0.85rem; font-weight: 500; }
+  .arch-node .node-sub { font-size: 0.75rem; color: var(--text-muted); }
+  .arch-arrow { font-size: 1.5rem; color: var(--accent); }
+
+  /* Tech Stack */
+  .tech-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-top: 2rem;
+  }
+
+  .tech-category h4 {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--accent);
+    margin-bottom: 0.75rem;
+  }
+
+  .tech-category ul { list-style: none; }
+  .tech-category li {
+    padding: 0.4rem 0;
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    border-bottom: 1px solid rgba(255,255,255,0.03);
+  }
+
+  /* Process */
+  .process-steps {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1.5rem;
+    margin-top: 2rem;
+  }
+
+  .process-step {
+    padding: 1.5rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+  }
+
+  .step-number {
+    width: 32px;
+    height: 32px;
+    background: var(--accent);
+    color: var(--bg);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 0.85rem;
+    margin-bottom: 1rem;
+  }
+
+  .process-step h4 { font-size: 1rem; font-weight: 600; margin-bottom: 0.5rem; }
+  .process-step p { font-size: 0.85rem; color: var(--text-muted); }
+
+  /* CTA */
+  .cta { text-align: center; padding: 6rem 2rem; }
+  .cta h2 { font-size: 2.5rem; font-weight: 700; margin-bottom: 1rem; }
+  .cta p { color: var(--text-muted); font-size: 1.1rem; margin-bottom: 2rem; }
+
+  .cta-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 1rem 2rem;
+    background: var(--accent);
+    color: var(--bg);
+    font-weight: 600;
+    font-size: 1rem;
+    border-radius: 12px;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+
+  .cta-button:hover { transform: scale(1.05); box-shadow: 0 0 30px var(--accent-glow); }
+
+  @media (max-width: 768px) {
+    .hero-stats { gap: 1.5rem; }
+    .project-content { grid-template-columns: 1fr; }
+    .project-diagram { border-left: none; border-top: 1px solid var(--border); }
+    .arch-flow { flex-direction: column; }
+    .arch-arrow { transform: rotate(90deg); }
+  }
+</style>
+</head>
+<body>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="hero-content">
+    <div class="hero-badge">Available for projects</div>
+    <h1>I build <span class="gradient">automated ecommerce systems</span> that sell while you sleep</h1>
+    <p>End-to-end automation for Shopify stores — from AI-powered email campaigns to delivery route optimization. Real systems, real results.</p>
+    <div class="hero-stats">
+      <div class="hero-stat">
+        <div class="number">+80%</div>
+        <div class="label">Revenue Growth</div>
+      </div>
+      <div class="hero-stat">
+        <div class="number">7</div>
+        <div class="label">Automated Flows</div>
+      </div>
+      <div class="hero-stat">
+        <div class="number">6</div>
+        <div class="label">Systems Built</div>
+      </div>
+      <div class="hero-stat">
+        <div class="number">129</div>
+        <div class="label">Products Migrated</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Projects -->
+<section class="section">
+  <div class="section-header">
+    <h2>Projects</h2>
+    <p>Production systems I've built for ecommerce brands — automation, analytics, and AI working together.</p>
+  </div>
+
+  <!-- Project 1: Newsletter -->
+  <div class="project">
+    <div class="project-top"></div>
+    <div class="project-content">
+      <div class="project-info">
+        <div class="project-number">Project 01</div>
+        <h3>Self-Improving AI Newsletter</h3>
+        <p class="description">AI generates 3 weekly emails from Shopify inventory + web research. But here's what makes it different: every email is a hypothesis-driven experiment. 47 hours after each send, the system auto-measures open rates, CTR, and unsubs via Klaviyo — then AI interprets whether the hypothesis was confirmed or refuted. Those learnings feed directly into the next generation cycle. The system literally gets smarter every week.</p>
+        <div class="project-tags">
+          <span class="tag">Claude API</span>
+          <span class="tag">Shopify API</span>
+          <span class="tag">Klaviyo</span>
+          <span class="tag">Telegram Bot</span>
+          <span class="tag">Autoresearch Loop</span>
+        </div>
+        <div class="project-result">
+          <div class="result-label">Key Feature</div>
+          <div class="result-text">Closed-loop learning: generate → send → measure → interpret → improve. Each email is an experiment that compounds knowledge over time.</div>
+        </div>
+      </div>
+      <div class="project-diagram">
+        <pre class="mermaid">
+flowchart TD
+    A["&#128218; Past Learnings\n+ Hypotheses"] --> B["&#129302; AI generates\n3 emails"]
+    B --> C["&#128722; Shopify\nInventory"]
+    C --> B
+    B --> D["&#128172; Telegram\nApproval"]
+    D --> E["&#128228; Klaviyo\nSend"]
+    E --> F["&#9200; Wait 47h"]
+    F --> G["&#128202; Measure\nOR% CTR% Unsub%"]
+    G --> H["&#129302; AI interprets\nresults vs hypothesis"]
+    H --> A
+
+    style A fill:#1a1a2e,stroke:#f97316,color:#fafafa
+    style B fill:#1a1a2e,stroke:#a855f7,color:#fafafa
+    style C fill:#1a1a2e,stroke:#22c55e,color:#fafafa
+    style D fill:#1a1a2e,stroke:#3b82f6,color:#fafafa
+    style E fill:#1a1a2e,stroke:#ec4899,color:#fafafa
+    style F fill:#1a1a2e,stroke:#737373,color:#fafafa
+    style G fill:#1a1a2e,stroke:#06b6d4,color:#fafafa
+    style H fill:#1a1a2e,stroke:#a855f7,color:#fafafa
+        </pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- Project 2: Analytics Dashboard -->
+  <div class="project">
+    <div class="project-top"></div>
+    <div class="project-content">
+      <div class="project-info">
+        <div class="project-number">Project 02</div>
+        <h3>Marketing Analytics Dashboard</h3>
+        <p class="description">Multi-source analytics platform that aggregates data from Meta Ads, Shopify, Klaviyo, and GA4. AI analyzes performance and generates actionable recommendations with interactive Chart.js visualizations.</p>
+        <div class="project-tags">
+          <span class="tag">Meta Ads API</span>
+          <span class="tag">GA4</span>
+          <span class="tag">Shopify</span>
+          <span class="tag">Klaviyo</span>
+          <span class="tag">Chart.js</span>
+        </div>
+        <div class="project-result">
+          <div class="result-label">Key Feature</div>
+          <div class="result-text">Automated weekly & monthly reports with AI-powered insights delivered via email + Telegram</div>
+        </div>
+      </div>
+      <div class="project-diagram">
+        <pre class="mermaid">
+flowchart TD
+    A["&#128240; Meta Ads\nAPI"] --> E["&#128202; Aggregator"]
+    B["&#128722; Shopify\nAPI"] --> E
+    C["&#128231; Klaviyo\nAPI"] --> E
+    D["&#128200; GA4\nAPI"] --> E
+    E --> F["&#129302; AI Analysis\n& Insights"]
+    F --> G["&#128202; Chart.js\nDashboard"]
+    G --> H["&#128231; Email +\nTelegram"]
+
+    style A fill:#1a1a2e,stroke:#3b82f6,color:#fafafa
+    style B fill:#1a1a2e,stroke:#22c55e,color:#fafafa
+    style C fill:#1a1a2e,stroke:#ec4899,color:#fafafa
+    style D fill:#1a1a2e,stroke:#f97316,color:#fafafa
+    style E fill:#1a1a2e,stroke:#a855f7,color:#fafafa
+    style F fill:#1a1a2e,stroke:#a855f7,color:#fafafa
+    style G fill:#1a1a2e,stroke:#06b6d4,color:#fafafa
+    style H fill:#15803d,stroke:#22c55e,color:#fafafa
+        </pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- Project 3: Klaviyo Flows -->
+  <div class="project">
+    <div class="project-top"></div>
+    <div class="project-content">
+      <div class="project-info">
+        <div class="project-number">Project 03</div>
+        <h3>Klaviyo Email Flow Suite</h3>
+        <p class="description">Programmatically built 7 complete email automation flows: abandoned cart (3 emails), post-purchase (5 emails), welcome series, winback, browse abandonment, back-in-stock, and sunset/unengaged sequences.</p>
+        <div class="project-tags">
+          <span class="tag">Klaviyo API v3</span>
+          <span class="tag">Email Automation</span>
+          <span class="tag">Python</span>
+          <span class="tag">HTML Templates</span>
+        </div>
+        <div class="project-result">
+          <div class="result-label">Key Feature</div>
+          <div class="result-text">7 flows, 19 emails total — all created via API with branded HTML templates</div>
+        </div>
+      </div>
+      <div class="project-diagram">
+        <pre class="mermaid">
+flowchart TD
+    A["&#128221; Define Flow\nTriggers"] --> B["&#128295; Klaviyo\nAPI v3"]
+    B --> C1["&#128722; Abandoned\nCart ×3"]
+    B --> C2["&#128230; Post-\nPurchase ×5"]
+    B --> C3["&#128075; Welcome\nSeries"]
+    B --> C4["&#128260; Winback +\nBrowse + Stock"]
+    C1 --> D["&#127912; HTML\nTemplates"]
+    C2 --> D
+    C3 --> D
+    C4 --> D
+    D --> E["&#9989; 7 Flows\nActivated"]
+
+    style A fill:#1a1a2e,stroke:#f97316,color:#fafafa
+    style B fill:#1a1a2e,stroke:#ec4899,color:#fafafa
+    style C1 fill:#1a1a2e,stroke:#3b82f6,color:#fafafa
+    style C2 fill:#1a1a2e,stroke:#3b82f6,color:#fafafa
+    style C3 fill:#1a1a2e,stroke:#3b82f6,color:#fafafa
+    style C4 fill:#1a1a2e,stroke:#3b82f6,color:#fafafa
+    style D fill:#1a1a2e,stroke:#a855f7,color:#fafafa
+    style E fill:#15803d,stroke:#22c55e,color:#fafafa
+        </pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- Project 4: Route Optimization -->
+  <div class="project">
+    <div class="project-top"></div>
+    <div class="project-content">
+      <div class="project-info">
+        <div class="project-number">Project 04</div>
+        <h3>Delivery Route Optimization</h3>
+        <p class="description">End-to-end pipeline: imports Shopify orders, validates & geocodes addresses with traffic-light quality scoring, then solves the Travelling Salesman Problem for optimal delivery routes.</p>
+        <div class="project-tags">
+          <span class="tag">HERE Maps API</span>
+          <span class="tag">OSRM</span>
+          <span class="tag">Shopify API</span>
+          <span class="tag">TSP Solver</span>
+        </div>
+        <div class="project-result">
+          <div class="result-label">Key Feature</div>
+          <div class="result-text">Automated driver route sheets with address validation — red/yellow/green quality flags</div>
+        </div>
+      </div>
+      <div class="project-diagram">
+        <pre class="mermaid">
+flowchart TD
+    A["&#128722; Shopify\nOrders CSV"] --> B["&#128196; Parse &\nValidate"]
+    B --> C["&#127758; HERE Maps\nGeocode"]
+    C --> D{"Address\nQuality?"}
+    D -->|"&#128994; Valid"| E["&#128663; OSRM\nTSP Solver"]
+    D -->|"&#128992; Review"| F["&#9888; Flag for\nReview"]
+    D -->|"&#128308; Bad"| G["&#128222; Contact\nCustomer"]
+    E --> H["&#128203; Route\nSheet"]
+    F --> E
+
+    style A fill:#1a1a2e,stroke:#22c55e,color:#fafafa
+    style B fill:#1a1a2e,stroke:#3b82f6,color:#fafafa
+    style C fill:#1a1a2e,stroke:#06b6d4,color:#fafafa
+    style D fill:#1a1a2e,stroke:#f97316,color:#fafafa
+    style E fill:#1a1a2e,stroke:#a855f7,color:#fafafa
+    style F fill:#1a1a2e,stroke:#f97316,color:#fafafa
+    style G fill:#1a1a2e,stroke:#ec4899,color:#fafafa
+    style H fill:#15803d,stroke:#22c55e,color:#fafafa
+        </pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- Project 5: Product Automation -->
+  <div class="project">
+    <div class="project-top"></div>
+    <div class="project-content">
+      <div class="project-info">
+        <div class="project-number">Project 05</div>
+        <h3>Shopify Product Automation</h3>
+        <p class="description">AI generates complete product content (descriptions, care tips, SEO metadata) and uploads via Shopify GraphQL API with custom metafields. Full product lifecycle from content generation to live store.</p>
+        <div class="project-tags">
+          <span class="tag">Shopify GraphQL</span>
+          <span class="tag">Claude API</span>
+          <span class="tag">Metafields</span>
+          <span class="tag">SEO</span>
+        </div>
+        <div class="project-result">
+          <div class="result-label">Key Feature</div>
+          <div class="result-text">One command: AI writes copy, validates quality, uploads to Shopify with all metafields</div>
+        </div>
+      </div>
+      <div class="project-diagram">
+        <pre class="mermaid">
+flowchart TD
+    A["&#128221; Product\nBrief"] --> B["&#129302; Claude AI\nContent Gen"]
+    B --> C["&#128196; Description\n+ Tips + SEO"]
+    C --> D{"Quality\nCheck"}
+    D -->|Pass| E["&#128640; Shopify\nGraphQL API"]
+    D -->|Fail| B
+    E --> F["&#127991; Custom\nMetafields"]
+    F --> G["&#9989; Live on\nStore"]
+
+    style A fill:#1a1a2e,stroke:#a855f7,color:#fafafa
+    style B fill:#1a1a2e,stroke:#a855f7,color:#fafafa
+    style C fill:#1a1a2e,stroke:#3b82f6,color:#fafafa
+    style D fill:#1a1a2e,stroke:#f97316,color:#fafafa
+    style E fill:#1a1a2e,stroke:#22c55e,color:#fafafa
+    style F fill:#1a1a2e,stroke:#06b6d4,color:#fafafa
+    style G fill:#15803d,stroke:#22c55e,color:#fafafa
+        </pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- Project 6: Catalog Migration -->
+  <div class="project">
+    <div class="project-top"></div>
+    <div class="project-content">
+      <div class="project-info">
+        <div class="project-number">Project 06</div>
+        <h3>E-commerce Catalog Migration</h3>
+        <p class="description">Automated WooCommerce-to-Shopify migration pipeline: web scraper extracts 129 products with dimensions, pricing, and categories, transforms data, and bulk uploads with collection assignment.</p>
+        <div class="project-tags">
+          <span class="tag">Web Scraping</span>
+          <span class="tag">Playwright</span>
+          <span class="tag">Shopify REST API</span>
+          <span class="tag">Data Pipeline</span>
+        </div>
+        <div class="project-result">
+          <div class="result-label">Key Feature</div>
+          <div class="result-text">129 products scraped, transformed, and uploaded — including 10 collections and custom metafields</div>
+        </div>
+      </div>
+      <div class="project-diagram">
+        <pre class="mermaid">
+flowchart TD
+    A["&#127760; WooCommerce\nSite"] --> B["&#128375; Playwright\nScraper"]
+    B --> C["&#128196; JSON-LD +\nHTML Parse"]
+    C --> D["&#128259; Transform\nto Shopify"]
+    D --> E["&#128640; Shopify\nREST API"]
+    E --> F["&#128193; Create\nCollections"]
+    F --> G["&#127991; Assign\nMetafields"]
+    G --> H["&#9989; 129 Products\nLive"]
+
+    style A fill:#1a1a2e,stroke:#ec4899,color:#fafafa
+    style B fill:#1a1a2e,stroke:#a855f7,color:#fafafa
+    style C fill:#1a1a2e,stroke:#3b82f6,color:#fafafa
+    style D fill:#1a1a2e,stroke:#f97316,color:#fafafa
+    style E fill:#1a1a2e,stroke:#22c55e,color:#fafafa
+    style F fill:#1a1a2e,stroke:#06b6d4,color:#fafafa
+    style G fill:#1a1a2e,stroke:#06b6d4,color:#fafafa
+    style H fill:#15803d,stroke:#22c55e,color:#fafafa
+        </pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- Architecture -->
+  <div class="architecture">
+    <h3>How I Build Automation Systems</h3>
+    <div class="arch-flow">
+      <div class="arch-node">
+        <div class="node-icon">&#x1F4CB;</div>
+        <div class="node-label">Workflow</div>
+        <div class="node-sub">Define the process</div>
+      </div>
+      <div class="arch-arrow">&#x2192;</div>
+      <div class="arch-node">
+        <div class="node-icon">&#x1F916;</div>
+        <div class="node-label">AI Agent</div>
+        <div class="node-sub">Orchestrate & decide</div>
+      </div>
+      <div class="arch-arrow">&#x2192;</div>
+      <div class="arch-node">
+        <div class="node-icon">&#x2699;</div>
+        <div class="node-label">Tools</div>
+        <div class="node-sub">Execute reliably</div>
+      </div>
+      <div class="arch-arrow">&#x2192;</div>
+      <div class="arch-node">
+        <div class="node-icon">&#x2705;</div>
+        <div class="node-label">Output</div>
+        <div class="node-sub">Dashboards, emails, data</div>
+      </div>
+    </div>
+    <p style="text-align:center; color: var(--text-muted); font-size: 0.9rem; max-width: 600px; margin: 0 auto;">
+      AI handles reasoning and coordination. Deterministic scripts handle execution. This separation is what makes automation reliable at scale — no hallucinated API calls, no random failures.
+    </p>
+  </div>
+</section>
+
+<!-- Self-Improving Systems -->
+<section class="section" style="padding-top: 0;">
+  <div class="section-header">
+    <h2>Systems That Learn</h2>
+    <p>Most automations run the same way forever. Mine get better every cycle.</p>
+  </div>
+
+  <div class="architecture" style="margin-top: 0;">
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: center;">
+      <div>
+        <h3 style="font-size: 1.3rem; margin-bottom: 1.5rem;">The Autoresearch Loop</h3>
+        <p style="color: var(--text-muted); font-size: 0.95rem; line-height: 1.8; margin-bottom: 1.5rem;">
+          Inspired by Karpathy's autoresearch framework. Every action the system takes is a hypothesis-driven experiment. After execution, it automatically measures results, interprets them with AI, and feeds confirmed learnings back into the next cycle.
+        </p>
+        <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+          <div style="display: flex; align-items: center; gap: 0.75rem;">
+            <span style="background: var(--accent-glow); border: 1px solid var(--accent-dim); border-radius: 8px; padding: 0.3rem 0.6rem; font-size: 0.8rem; color: var(--accent); font-weight: 600; min-width: 80px; text-align: center;">Generate</span>
+            <span style="color: var(--text-muted); font-size: 0.85rem;">AI creates content with an embedded hypothesis to test</span>
+          </div>
+          <div style="display: flex; align-items: center; gap: 0.75rem;">
+            <span style="background: rgba(59,130,246,0.15); border: 1px solid rgba(59,130,246,0.4); border-radius: 8px; padding: 0.3rem 0.6rem; font-size: 0.8rem; color: var(--blue); font-weight: 600; min-width: 80px; text-align: center;">Execute</span>
+            <span style="color: var(--text-muted); font-size: 0.85rem;">Human approves, system sends via production APIs</span>
+          </div>
+          <div style="display: flex; align-items: center; gap: 0.75rem;">
+            <span style="background: rgba(6,182,212,0.15); border: 1px solid rgba(6,182,212,0.4); border-radius: 8px; padding: 0.3rem 0.6rem; font-size: 0.8rem; color: var(--cyan); font-weight: 600; min-width: 80px; text-align: center;">Measure</span>
+            <span style="color: var(--text-muted); font-size: 0.85rem;">Auto-fetches real metrics after a waiting period</span>
+          </div>
+          <div style="display: flex; align-items: center; gap: 0.75rem;">
+            <span style="background: rgba(168,85,247,0.15); border: 1px solid rgba(168,85,247,0.4); border-radius: 8px; padding: 0.3rem 0.6rem; font-size: 0.8rem; color: var(--purple); font-weight: 600; min-width: 80px; text-align: center;">Learn</span>
+            <span style="color: var(--text-muted); font-size: 0.85rem;">AI interprets results — confirm, refute, or inconclusive</span>
+          </div>
+          <div style="display: flex; align-items: center; gap: 0.75rem;">
+            <span style="background: rgba(249,115,22,0.15); border: 1px solid rgba(249,115,22,0.4); border-radius: 8px; padding: 0.3rem 0.6rem; font-size: 0.8rem; color: var(--orange); font-weight: 600; min-width: 80px; text-align: center;">Improve</span>
+            <span style="color: var(--text-muted); font-size: 0.85rem;">Confirmed learnings feed into next generation prompt</span>
+          </div>
+        </div>
+      </div>
+      <div style="display: flex; align-items: center; justify-content: center;">
+        <pre class="mermaid">
+flowchart TD
+    A["&#127919; Hypothesis\nLibrary"] --> B["&#129302; AI Generates\nwith experiment"]
+    B --> C["&#128640; Execute &\nSend"]
+    C --> D["&#128202; Auto-Measure\nReal Metrics"]
+    D --> E["&#129302; AI Interprets\nResults"]
+    E -->|"Confirmed &#9989;"| F["&#128218; Add to\nLearnings"]
+    E -->|"Refuted &#10060;"| G["&#128465; Discard\nHypothesis"]
+    E -->|"Inconclusive &#9898;"| H["&#128260; Retest with\nVariation"]
+    F --> A
+    G --> A
+    H --> A
+
+    style A fill:#1a1a2e,stroke:#f97316,color:#fafafa
+    style B fill:#1a1a2e,stroke:#a855f7,color:#fafafa
+    style C fill:#1a1a2e,stroke:#22c55e,color:#fafafa
+    style D fill:#1a1a2e,stroke:#06b6d4,color:#fafafa
+    style E fill:#1a1a2e,stroke:#a855f7,color:#fafafa
+    style F fill:#15803d,stroke:#22c55e,color:#fafafa
+    style G fill:#1a1a2e,stroke:#ec4899,color:#fafafa
+    style H fill:#1a1a2e,stroke:#3b82f6,color:#fafafa
+        </pre>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Process -->
+<section class="section" style="padding-top: 0;">
+  <div class="section-header">
+    <h2>My Process</h2>
+    <p>From first message to running system — here's how I work.</p>
+  </div>
+  <div class="process-steps">
+    <div class="process-step">
+      <div class="step-number">1</div>
+      <h4>Understand</h4>
+      <p>Quick call or async chat. I map out your current workflow, pain points, and what "done" looks like.</p>
+    </div>
+    <div class="process-step">
+      <div class="step-number">2</div>
+      <h4>Prototype</h4>
+      <p>Build a working proof-of-concept fast. You see real results before committing to the full build.</p>
+    </div>
+    <div class="process-step">
+      <div class="step-number">3</div>
+      <h4>Build</h4>
+      <p>Production-ready automation with error handling, logging, and monitoring. No duct tape solutions.</p>
+    </div>
+    <div class="process-step">
+      <div class="step-number">4</div>
+      <h4>Handoff</h4>
+      <p>Documentation, walkthrough, and support. You own the system — it runs without me.</p>
+    </div>
+  </div>
+</section>
+
+<!-- Tech Stack -->
+<section class="section" style="padding-top: 0;">
+  <div class="section-header">
+    <h2>Tech Stack</h2>
+    <p>Tools I use daily to build ecommerce automation.</p>
+  </div>
+  <div class="tech-grid">
+    <div class="tech-category">
+      <h4>Ecommerce</h4>
+      <ul>
+        <li>Shopify (REST + GraphQL)</li>
+        <li>WooCommerce</li>
+        <li>Stripe</li>
+      </ul>
+    </div>
+    <div class="tech-category">
+      <h4>Email & Marketing</h4>
+      <ul>
+        <li>Klaviyo</li>
+        <li>Meta Ads</li>
+        <li>Google Ads / GA4</li>
+      </ul>
+    </div>
+    <div class="tech-category">
+      <h4>Automation</h4>
+      <ul>
+        <li>Make.com</li>
+        <li>n8n</li>
+        <li>Zapier</li>
+        <li>Vapi (Voice AI)</li>
+      </ul>
+    </div>
+    <div class="tech-category">
+      <h4>AI & APIs</h4>
+      <ul>
+        <li>OpenAI / Claude APIs</li>
+        <li>Python</li>
+        <li>Webhooks & REST</li>
+        <li>Playwright</li>
+      </ul>
+    </div>
+    <div class="tech-category">
+      <h4>Data & Analytics</h4>
+      <ul>
+        <li>Chart.js</li>
+        <li>HERE Maps</li>
+        <li>OSRM Routing</li>
+        <li>Web Scraping</li>
+      </ul>
+    </div>
+    <div class="tech-category">
+      <h4>Productivity</h4>
+      <ul>
+        <li>Telegram Bots</li>
+        <li>Google Workspace</li>
+        <li>Airtable</li>
+        <li>ClickUp / Monday</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta">
+  <h2>Let's automate your ecommerce</h2>
+  <p>I'll record a quick demo showing exactly how I'd solve your problem.</p>
+  <a href="#" class="cta-button">Get in touch &#x2192;</a>
+</section>
+
+<script>
+  mermaid.initialize({
+    startOnLoad: true,
+    theme: 'dark',
+    themeVariables: {
+      primaryColor: '#1a1a2e',
+      primaryTextColor: '#fafafa',
+      primaryBorderColor: '#22c55e',
+      lineColor: '#404040',
+      secondaryColor: '#141414',
+      tertiaryColor: '#0a0a0a',
+      fontFamily: 'Inter, sans-serif',
+      fontSize: '13px'
+    },
+    flowchart: {
+      htmlLabels: true,
+      curve: 'basis',
+      padding: 15,
+      nodeSpacing: 30,
+      rankSpacing: 40
+    }
+  });
+</script>
+
+</body>
+</html>
