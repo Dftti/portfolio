@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Spotify DJ Automation — System Architecture | Diego F.</title>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+
+  :root {
+    --bg: #0a0a0a;
+    --surface: #141414;
+    --surface-2: #1c1c1c;
+    --border: #262626;
+    --text: #fafafa;
+    --text-muted: #a3a3a3;
+    --accent: #22c55e;
+    --accent-dim: #15803d;
+    --accent-glow: rgba(34, 197, 94, 0.15);
+    --blue: #3b82f6;
+    --purple: #a855f7;
+    --orange: #f97316;
+    --pink: #ec4899;
+    --cyan: #06b6d4;
+    --spotify: #1DB954;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Hero */
+  .hero {
+    min-height: 50vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 4rem 2rem 2rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle at 50% 50%, rgba(29, 185, 84, 0.12) 0%, transparent 50%);
+    animation: pulse 8s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 0.3; transform: scale(1); }
+    50% { opacity: 0.6; transform: scale(1.1); }
+  }
+
+  .hero-content { position: relative; z-index: 1; max-width: 800px; }
+
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.4rem 1rem;
+    background: rgba(29, 185, 84, 0.15);
+    border: 1px solid rgba(29, 185, 84, 0.3);
+    border-radius: 100px;
+    font-size: 0.85rem;
+    color: var(--spotify);
+    font-weight: 500;
+    margin-bottom: 2rem;
+  }
+
+  .hero-badge::before { content: ''; width: 8px; height: 8px; background: var(--spotify); border-radius: 50%; }
+
+  .hero h1 {
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    line-height: 1.1;
+    margin-bottom: 1.5rem;
+  }
+
+  .hero h1 .gradient {
+    background: linear-gradient(135deg, var(--spotify) 0%, var(--cyan) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .hero p {
+    font-size: 1.15rem;
+    color: var(--text-muted);
+    max-width: 650px;
+    margin: 0 auto 2rem;
+  }
+
+  .hero-stats {
+    display: flex;
+    gap: 2.5rem;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .hero-stat { text-align: center; }
+  .hero-stat .number { font-size: 2rem; font-weight: 800; color: var(--spotify); }
+  .hero-stat .label { font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; }
+
+  /* Sections */
+  .section {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 3rem 2rem;
+  }
+
+  .section-header {
+    text-align: center;
+    margin-bottom: 3rem;
+  }
+
+  .section-header h2 {
+    font-size: 2rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin-bottom: 0.75rem;
+  }
+
+  .section-header p {
+    color: var(--text-muted);
+    font-size: 1rem;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  /* Cards */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    transition: border-color 0.3s;
+  }
+
+  .card:hover { border-color: var(--accent-dim); }
+
+  .card h3 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .card p, .card li {
+    color: var(--text-muted);
+    font-size: 0.95rem;
+    line-height: 1.7;
+  }
+
+  .card ul {
+    list-style: none;
+    margin-top: 0.75rem;
+  }
+
+  .card ul li {
+    padding: 0.3rem 0;
+    padding-left: 1.5rem;
+    position: relative;
+  }
+
+  .card ul li::before {
+    content: '→';
+    position: absolute;
+    left: 0;
+    color: var(--spotify);
+    font-weight: 600;
+  }
+
+  /* Diagram */
+  .diagram-container {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 2.5rem;
+    margin-bottom: 2rem;
+    overflow-x: auto;
+  }
+
+  .diagram-container .mermaid {
+    display: flex;
+    justify-content: center;
+  }
+
+  /* Comparison Table */
+  .comparison {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+  }
+
+  .comparison th, .comparison td {
+    padding: 0.75rem 1rem;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.9rem;
+  }
+
+  .comparison th {
+    color: var(--text-muted);
+    font-weight: 500;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .comparison td { color: var(--text-muted); }
+  .comparison td:first-child { color: var(--text); font-weight: 500; }
+  .comparison .win { color: var(--spotify); font-weight: 600; }
+  .comparison .lose { color: #ef4444; }
+
+  /* Code Block */
+  .code-block {
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin: 1rem 0;
+    overflow-x: auto;
+  }
+
+  .code-block pre {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85rem;
+    line-height: 1.8;
+    color: var(--text-muted);
+  }
+
+  .code-block .comment { color: #6b7280; }
+  .code-block .keyword { color: var(--purple); }
+  .code-block .string { color: var(--accent); }
+  .code-block .function { color: var(--blue); }
+  .code-block .number { color: var(--orange); }
+
+  /* Features Grid */
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+    margin-top: 2rem;
+  }
+
+  .feature {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.5rem;
+    transition: border-color 0.3s;
+  }
+
+  .feature:hover { border-color: var(--accent-dim); }
+
+  .feature-icon {
+    font-size: 1.5rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .feature h4 {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+  }
+
+  .feature p {
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    line-height: 1.6;
+  }
+
+  /* Deploy Options */
+  .deploy-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+  }
+
+  .deploy-option {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.5rem;
+    text-align: center;
+  }
+
+  .deploy-option.recommended {
+    border-color: var(--spotify);
+    position: relative;
+  }
+
+  .deploy-option.recommended::after {
+    content: 'RECOMMENDED';
+    position: absolute;
+    top: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 2px 12px;
+    background: var(--spotify);
+    color: #000;
+    font-size: 0.7rem;
+    font-weight: 700;
+    border-radius: 100px;
+    letter-spacing: 0.05em;
+  }
+
+  .deploy-icon { font-size: 2rem; margin-bottom: 0.75rem; }
+  .deploy-option h4 { font-size: 1rem; margin-bottom: 0.5rem; }
+  .deploy-option p { color: var(--text-muted); font-size: 0.85rem; }
+  .deploy-option .cost { color: var(--spotify); font-weight: 700; font-size: 1.1rem; margin-top: 0.5rem; }
+
+  /* Timeline */
+  .timeline {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 2rem;
+    padding: 1.5rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .timeline-step {
+    text-align: center;
+    flex: 1;
+    min-width: 120px;
+  }
+
+  .timeline-step .time { font-size: 1.25rem; font-weight: 700; color: var(--spotify); }
+  .timeline-step .task { font-size: 0.8rem; color: var(--text-muted); margin-top: 0.25rem; }
+
+  .timeline-arrow {
+    color: var(--border);
+    font-size: 1.5rem;
+  }
+
+  /* CTA */
+  .cta {
+    text-align: center;
+    padding: 4rem 2rem;
+  }
+
+  .cta h2 {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+  }
+
+  .cta p {
+    color: var(--text-muted);
+    margin-bottom: 2rem;
+    font-size: 1.05rem;
+  }
+
+  .back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--text-muted);
+    text-decoration: none;
+    font-size: 0.9rem;
+    padding: 0.5rem 1rem;
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    transition: all 0.3s;
+    margin-top: 2rem;
+  }
+
+  .back-link:hover {
+    color: var(--text);
+    border-color: var(--accent-dim);
+  }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .deploy-grid { grid-template-columns: 1fr; }
+    .features-grid { grid-template-columns: 1fr; }
+    .hero-stats { gap: 1.5rem; }
+  }
+</style>
+</head>
+<body>
+<script>
+  mermaid.initialize({
+    startOnLoad: true,
+    theme: 'dark',
+    themeVariables: {
+      primaryColor: '#1c1c1c',
+      primaryTextColor: '#fafafa',
+      primaryBorderColor: '#262626',
+      lineColor: '#4b5563',
+      secondaryColor: '#141414',
+      tertiaryColor: '#0a0a0a',
+      fontFamily: 'Inter, sans-serif',
+      fontSize: '14px'
+    }
+  });
+</script>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="hero-content">
+    <div class="hero-badge">Custom Architecture Proposal</div>
+    <h1>Spotify DJ <span class="gradient">Automation</span></h1>
+    <p>A fully automated guest voting system for live events. Guests vote, the music adapts — zero manual intervention.</p>
+    <div class="hero-stats">
+      <div class="hero-stat">
+        <div class="number">30s</div>
+        <div class="label">Poll Interval</div>
+      </div>
+      <div class="hero-stat">
+        <div class="number">3-5</div>
+        <div class="label">Songs in Queue</div>
+      </div>
+      <div class="hero-stat">
+        <div class="number">$0</div>
+        <div class="label">Monthly Cost</div>
+      </div>
+      <div class="hero-stat">
+        <div class="number">~6h</div>
+        <div class="label">Build Time</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Why Python -->
+<section class="section">
+  <div class="section-header">
+    <h2>Why Python Instead of Make/Zapier</h2>
+    <p>For paid live events, a local script beats cloud services on every metric that matters.</p>
+  </div>
+
+  <div class="card">
+    <table class="comparison">
+      <thead>
+        <tr>
+          <th></th>
+          <th>Make / Zapier</th>
+          <th>Python Script</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Polling Speed</td>
+          <td class="lose">1 min minimum</td>
+          <td class="win">30s or faster</td>
+        </tr>
+        <tr>
+          <td>Execution Limits</td>
+          <td class="lose">Capped by plan</td>
+          <td class="win">Unlimited</td>
+        </tr>
+        <tr>
+          <td>Live Reliability</td>
+          <td class="lose">Depends on cloud uptime</td>
+          <td class="win">Runs locally at venue</td>
+        </tr>
+        <tr>
+          <td>Monthly Cost</td>
+          <td class="lose">$20-50/month</td>
+          <td class="win">Free</td>
+        </tr>
+        <tr>
+          <td>Live Debugging</td>
+          <td class="lose">Browser UI, check logs</td>
+          <td class="win">Terminal with real-time output</td>
+        </tr>
+        <tr>
+          <td>Customization</td>
+          <td class="lose">Limited to modules</td>
+          <td class="win">Full control</td>
+        </tr>
+        <tr>
+          <td>Offline Fallback</td>
+          <td class="lose">Dead</td>
+          <td class="win">Cached playlist keeps playing</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- System Architecture -->
+<section class="section">
+  <div class="section-header">
+    <h2>System Architecture</h2>
+    <p>Single Python script, one main loop, handles everything.</p>
+  </div>
+
+  <div class="diagram-container">
+    <pre class="mermaid">
+flowchart TD
+    A["🎤 Guests Vote — Google Form"] -->|Form response| B["Google Sheet — Vote Ledger"]
+
+    B --> C["Python Script — Main Loop every 30s"]
+
+    C --> D["1. Count Votes — Tally by playlist"]
+
+    D --> E{New winner?}
+
+    E -->|Same playlist| F["Skip — no change"]
+    E -->|Different playlist| G{"Anti-switch check — 3+ songs played?"}
+
+    G -->|Too soon| F
+    G -->|Switch allowed| H["Update active playlist"]
+
+    H --> I["2. Manage Queue — Check Spotify"]
+    F --> I
+
+    I --> J{"Queue < 3 songs?"}
+
+    J -->|Queue full| K["Sleep 30s — Loop"]
+    J -->|Needs songs| L["Fetch tracks from winning playlist"]
+
+    L --> M["Filter duplicates"]
+
+    M --> N["Add to Spotify queue"]
+
+    N --> O["Log queued songs"]
+
+    O --> K
+
+    P["🔧 Admin Override — Sheet cell"] -->|Force playlist| H
+
+    style A fill:#4CAF50,color:#fff
+    style C fill:#2196F3,color:#fff
+    style H fill:#FF9800,color:#fff
+    style N fill:#1DB954,color:#fff
+    style P fill:#f44336,color:#fff
+    </pre>
+  </div>
+</section>
+
+<!-- Key Features -->
+<section class="section">
+  <div class="section-header">
+    <h2>Key Features</h2>
+    <p>Every feature designed for the reality of live, paid events.</p>
+  </div>
+
+  <div class="features-grid">
+    <div class="feature">
+      <div class="feature-icon">🔄</div>
+      <h4>Anti-Rapid-Switching</h4>
+      <p>Current playlist must play at least 3 songs before switching. Rolling vote windows smooth out spikes. 3-minute cooldown after each switch.</p>
+    </div>
+    <div class="feature">
+      <div class="feature-icon">🚫</div>
+      <h4>Duplicate Prevention</h4>
+      <p>Tracks every queued song. Songs played in the last 2 hours are blocked. Falls back to runner-up playlist if all tracks are duplicates.</p>
+    </div>
+    <div class="feature">
+      <div class="feature-icon">🔧</div>
+      <h4>Admin Override</h4>
+      <p>One cell in Google Sheet controls everything. Set a playlist name to force it, type PAUSE to stop, clear it to resume voting.</p>
+    </div>
+    <div class="feature">
+      <div class="feature-icon">🛡️</div>
+      <h4>Error Handling</h4>
+      <p>Every API call is wrapped. If Spotify disconnects, the admin gets a Telegram alert. If Sheets is down, cached data keeps the music going.</p>
+    </div>
+    <div class="feature">
+      <div class="feature-icon">📊</div>
+      <h4>Real-Time Logs</h4>
+      <p>Terminal shows every vote count, playlist switch, and queued song with timestamps. Full visibility during the event.</p>
+    </div>
+    <div class="feature">
+      <div class="feature-icon">🎵</div>
+      <h4>Always 3-5 in Queue</h4>
+      <p>Queue manager checks every 30 seconds and tops up automatically. No gaps, no silence, no interruptions.</p>
+    </div>
+  </div>
+</section>
+
+<!-- Core Loop -->
+<section class="section">
+  <div class="section-header">
+    <h2>The Core Loop</h2>
+    <p>Clean, readable, maintainable. One file, one loop.</p>
+  </div>
+
+  <div class="code-block">
+    <pre><span class="comment"># spotify_dj.py — core architecture</span>
+
+<span class="keyword">POLL_INTERVAL</span> = <span class="number">30</span>          <span class="comment"># seconds between cycles</span>
+<span class="keyword">MIN_QUEUE</span>     = <span class="number">3</span>           <span class="comment"># minimum songs in queue</span>
+<span class="keyword">TARGET_QUEUE</span>  = <span class="number">5</span>           <span class="comment"># fill queue up to this</span>
+<span class="keyword">MIN_SONGS_BEFORE_SWITCH</span> = <span class="number">3</span> <span class="comment"># anti-rapid-switching</span>
+
+<span class="keyword">while</span> <span class="keyword">True</span>:
+    <span class="comment"># 1. Count votes from Google Sheet</span>
+    votes  = <span class="function">read_votes</span>(sheets)
+    winner = <span class="function">get_winning_playlist</span>(votes)
+
+    <span class="comment"># 2. Check admin override</span>
+    override = <span class="function">check_admin_override</span>(sheets)
+
+    <span class="comment"># 3. Anti-switching: only change after 3+ songs</span>
+    <span class="keyword">if</span> winner != active <span class="keyword">and</span> songs_played >= <span class="number">3</span>:
+        active = winner
+        <span class="function">log</span>(<span class="string">"🔄 Switched to: {winner}"</span>)
+
+    <span class="comment"># 4. Keep queue at 3-5 songs</span>
+    queue = <span class="function">spotify.queue</span>()
+    <span class="keyword">if</span> <span class="function">len</span>(queue) < <span class="keyword">MIN_QUEUE</span>:
+        tracks = <span class="function">get_tracks</span>(active)
+        tracks = <span class="function">filter_duplicates</span>(tracks)
+        <span class="keyword">for</span> track <span class="keyword">in</span> tracks[:<span class="keyword">TARGET_QUEUE</span> - <span class="function">len</span>(queue)]:
+            <span class="function">spotify.add_to_queue</span>(track)
+            <span class="function">log</span>(<span class="string">"🎵 Queued: {track.name}"</span>)
+
+    <span class="function">time.sleep</span>(<span class="keyword">POLL_INTERVAL</span>)</pre>
+  </div>
+</section>
+
+<!-- Deployment -->
+<section class="section">
+  <div class="section-header">
+    <h2>Deployment Options</h2>
+    <p>Three ways to run it — pick what fits your setup.</p>
+  </div>
+
+  <div class="deploy-grid">
+    <div class="deploy-option recommended">
+      <div class="deploy-icon">💻</div>
+      <h4>Laptop at Venue</h4>
+      <p>Run the script on any laptop. Same WiFi as Spotify. Real-time terminal logs. If internet drops, cached data keeps playing.</p>
+      <div class="cost">Free</div>
+    </div>
+    <div class="deploy-option">
+      <div class="deploy-icon">☁️</div>
+      <h4>Cloud Server</h4>
+      <p>Deploy on a VPS. Runs 24/7, no hardware needed. Great for recurring events or remote management.</p>
+      <div class="cost">$5/month</div>
+    </div>
+    <div class="deploy-option">
+      <div class="deploy-icon">🍓</div>
+      <h4>Raspberry Pi</h4>
+      <p>Dedicated hardware. Plug in, turn on, done. Bring it to every event. One-time purchase.</p>
+      <div class="cost">$35 once</div>
+    </div>
+  </div>
+</section>
+
+<!-- Timeline -->
+<section class="section">
+  <div class="section-header">
+    <h2>Estimated Timeline</h2>
+  </div>
+
+  <div class="timeline">
+    <div class="timeline-step">
+      <div class="time">2-3h</div>
+      <div class="task">Core Script</div>
+    </div>
+    <div class="timeline-arrow">→</div>
+    <div class="timeline-step">
+      <div class="time">1.5h</div>
+      <div class="task">API Setup</div>
+    </div>
+    <div class="timeline-arrow">→</div>
+    <div class="timeline-step">
+      <div class="time">1h</div>
+      <div class="task">Admin + Errors</div>
+    </div>
+    <div class="timeline-arrow">→</div>
+    <div class="timeline-step">
+      <div class="time">1.5h</div>
+      <div class="task">Testing</div>
+    </div>
+    <div class="timeline-arrow">=</div>
+    <div class="timeline-step">
+      <div class="time">~6h</div>
+      <div class="task">Total</div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta">
+  <h2>Ready to build this?</h2>
+  <p>This architecture was designed specifically for your project. Let's jump on a quick call to walk through the details.</p>
+  <a href="https://dftti.github.io/portfolio/" class="back-link">← Back to Full Portfolio</a>
+</section>
+
+</body>
+</html>
