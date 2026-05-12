@@ -391,7 +391,7 @@
         <div class="label">Automated Flows</div>
       </div>
       <div class="hero-stat">
-        <div class="number">6</div>
+        <div class="number">7</div>
         <div class="label">Systems Built</div>
       </div>
       <div class="hero-stat">
@@ -669,6 +669,55 @@ flowchart TD
     style F fill:#1a1a2e,stroke:#06b6d4,color:#fafafa
     style G fill:#1a1a2e,stroke:#06b6d4,color:#fafafa
     style H fill:#15803d,stroke:#22c55e,color:#fafafa
+        </pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- Project 7: Excel-to-CRM Browser Automation -->
+  <div class="project">
+    <div class="project-top"></div>
+    <div class="project-content">
+      <div class="project-info">
+        <div class="project-number">Project 07</div>
+        <h3>Excel-to-CRM Browser Automation</h3>
+        <p class="description">Production-ready pipeline that reads structured data from Excel spreadsheets, locates the correct record in a web-based CRM via search or calendar navigation, and updates fields automatically &mdash; all in a visible browser for monitoring. Uses a two-layer matching system: exact search first, then LLM-assisted fuzzy matching for ambiguous names or dates, with confidence thresholds that auto-proceed, flag, or skip. Every action is logged with before/after screenshots for a full audit trail.</p>
+        <div class="project-tags">
+          <span class="tag">Python</span>
+          <span class="tag">Playwright</span>
+          <span class="tag">pandas</span>
+          <span class="tag">OpenAI / Claude API</span>
+          <span class="tag">Browser Automation</span>
+        </div>
+        <div class="project-result">
+          <div class="result-label">Projected Impact</div>
+          <div class="result-text">Processes hundreds of records unattended &bull; Two-layer matching (exact + AI fuzzy) &bull; Full audit trail with screenshots &bull; Never stops on a single error</div>
+        </div>
+      </div>
+      <div class="project-diagram">
+        <pre class="mermaid">
+flowchart TD
+    A["&#128196; Excel File\nparse rows"] --> B["&#128269; Exact Search\nin CRM"]
+    B -->|"1 match"| D["&#127912; Playwright\nOpen Record"]
+    B -->|"0 or 2+"| C["&#129302; LLM Fuzzy\nMatch"]
+    C -->|"&#8805;90% conf"| D
+    C -->|"70-89%"| E["&#9888; Flag for\nReview"]
+    C -->|"&lt;70%"| F["&#9898; Skip +\nLog"]
+    D --> G["&#128221; Update\nFields"]
+    G --> H["&#128247; Screenshot\nBefore + After"]
+    H --> I["&#9989; Action\nLog"]
+    E --> I
+    F --> I
+
+    style A fill:#1a1a2e,stroke:#3b82f6,color:#fafafa
+    style B fill:#1a1a2e,stroke:#22c55e,color:#fafafa
+    style C fill:#1a1a2e,stroke:#a855f7,color:#fafafa
+    style D fill:#1a1a2e,stroke:#f97316,color:#fafafa
+    style E fill:#1a1a2e,stroke:#f97316,color:#fafafa
+    style F fill:#1a1a2e,stroke:#ec4899,color:#fafafa
+    style G fill:#1a1a2e,stroke:#06b6d4,color:#fafafa
+    style H fill:#1a1a2e,stroke:#06b6d4,color:#fafafa
+    style I fill:#15803d,stroke:#22c55e,color:#fafafa
         </pre>
       </div>
     </div>
